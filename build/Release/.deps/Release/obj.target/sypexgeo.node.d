@@ -1,1 +1,0 @@
-cmd_Release/obj.target/sypexgeo.node := flock ./Release/linker.lock g++ -shared -pthread -m32 -rdynamic  -Wl,-soname=sypexgeo.node -o Release/obj.target/sypexgeo.node -Wl,--start-group Release/obj.target/sypexgeo/src/sypexgeo_node.o Release/obj.target/sypexgeo/src/sypexgeo.o -Wl,--end-group 

@@ -1,1 +1,0 @@
-cmd_Release/sypexgeo.node := ln -f "Release/obj.target/sypexgeo.node" "Release/sypexgeo.node" 2>/dev/null || (rm -rf "Release/sypexgeo.node" && cp -af "Release/obj.target/sypexgeo.node" "Release/sypexgeo.node")
