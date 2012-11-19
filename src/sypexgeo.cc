@@ -171,7 +171,7 @@ sxgeo_city* SypexGeo::getCity(const char *ip) {
     return (seek > 0) ? this->parseCity(seek) : NULL;
 }
 
-sxgeo_city* SypexGeo::getFullCity(const char *ip) {
+sxgeo_city* SypexGeo::getCityFull(const char *ip) {
     uint32_t seek = this->getNum(ip);
     if (seek > 0) {
         sxgeo_city *city = this->parseCity(seek);

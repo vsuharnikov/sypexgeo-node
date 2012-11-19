@@ -29,9 +29,9 @@ module.exports = {
 			}
 		},
 
-		'#getFullCity': {
+		'#getCityFull': {
 			'should return valid structure': function (done) {
-				var city = object.getFullCity('46.148.53.103');
+				var city = object.getCityFull('46.148.53.103');
 				expect(city).to.have.property('timezone',  'Europe/Moscow');
 				expect(city).to.have.property('country',   'RU');
 				expect(city).to.have.property('region',    'Нижегородская область');

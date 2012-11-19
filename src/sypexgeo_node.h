@@ -20,8 +20,9 @@ class SypexGeoNode : public node::ObjectWrap {
         SypexGeoNode();
 
         static v8::Handle<v8::Value> New(const v8::Arguments& args);
+
         static v8::Handle<v8::Value> GetCountry(const v8::Arguments& args);
-        static v8::Handle<v8::Value> GetFullCity(const v8::Arguments& args);
+        static v8::Handle<v8::Value> GetCityFull(const v8::Arguments& args);
         static v8::Handle<v8::Value> GetCity(const v8::Arguments& args);
 
         SypexGeo geo;

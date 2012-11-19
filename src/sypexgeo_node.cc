@@ -21,7 +21,7 @@ void SypexGeoNode::Init(v8::Handle<v8::Object> target) {
     SypexGeoNode::constructor->SetClassName(name);
 
     NODE_SET_PROTOTYPE_METHOD(SypexGeoNode::constructor, "getCountry", SypexGeoNode::GetCountry);
-    NODE_SET_PROTOTYPE_METHOD(SypexGeoNode::constructor, "getFullCity", SypexGeoNode::GetFullCity);
+    NODE_SET_PROTOTYPE_METHOD(SypexGeoNode::constructor, "getCityFull", SypexGeoNode::GetCityFull);
     NODE_SET_PROTOTYPE_METHOD(SypexGeoNode::constructor, "getCity", SypexGeoNode::GetCity);
 
     target->Set(v8::String::NewSymbol("MODE_MEMORY"), v8::Integer::New(SypexGeo::MODE_MEMORY));
@@ -88,7 +88,7 @@ v8::Handle<v8::Value> SypexGeoNode::GetCountry(const v8::Arguments &args) {
         return scope.Close(v8::String::New(country));
 }
 
-v8::Handle<v8::Value> SypexGeoNode::GetFullCity(const v8::Arguments &args) {
+v8::Handle<v8::Value> SypexGeoNode::GetCityFull(const v8::Arguments &args) {
     v8::HandleScope scope;
 
     if (args.Length() < 1) {
@@ -100,7 +100,7 @@ v8::Handle<v8::Value> SypexGeoNode::GetFullCity(const v8::Arguments &args) {
     SypexGeoNode *obj = ObjectWrap::Unwrap<SypexGeoNode>(args.This());
 
     v8::String::AsciiValue ip(args[0]->ToString());
-    sxgeo_city *city = obj->geo.getFullCity(*ip);
+    sxgeo_city *city = obj->geo.getCityFull(*ip);
 
     v8::Local<v8::Object> ret = v8::Object::New();
     ret->Set(v8::String::New("timezone"),  city->timezone ? v8::String::New(city->timezone) : v8::Null());

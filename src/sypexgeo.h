@@ -95,7 +95,7 @@ class SypexGeo {
         uint8_t     open(const char *path, const uint8_t mode);
 
         sxgeo_city* getCity(const char *ip);
-        sxgeo_city* getFullCity(const char *ip);
+        sxgeo_city* getCityFull(const char *ip);
         const char* getCountry(const char *ip);
 
     private:
