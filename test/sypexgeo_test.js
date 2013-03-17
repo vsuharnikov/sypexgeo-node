@@ -39,6 +39,11 @@ module.exports = {
 				expect(city).to.have.property('fips',      51);
 				expect(city).to.have.property('latitude').closeTo(55.4, 0.01);
 				expect(city).to.have.property('longitude').closeTo(43.816, 0.001);
+
+				var city = object.getCityFull('5.9.61.25');
+				expect(city).to.have.property('country', 'DE');
+				expect(city).to.have.property('latitude').closeTo(51, 0.01);
+				expect(city).to.have.property('longitude').closeTo(9, 0.001);
 				done();
 			}
 		},

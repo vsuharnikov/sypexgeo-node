@@ -10,6 +10,7 @@
 #include <byteswap.h>
 #include <cstdlib>
 #include <cstring>
+#include <iostream>
 
 #define SXGEO_ASCII_ZERO_CODE 48
 
@@ -237,7 +238,7 @@ uint32_t SypexGeo::searchDb(const char* str, uint32_t ipn, uint32_t min, uint32_
     uint32_t buffer = 0;
 
     if (max - min > 0) {
-        ipn &= 0x00FFFFFF;  // We've found area by first byte, clear his
+        ipn &= 0x00FFFFFF;  // We've found area by first byte, clear his 00FF..
         uint32_t offset = 0;
 
         while (max - min > 8) {
@@ -274,6 +275,12 @@ uint32_t SypexGeo::searchDb(const char* str, uint32_t ipn, uint32_t min, uint32_
 
 uint32_t SypexGeo::searchIdx(uint32_t ipn, uint32_t min, uint32_t max) {
     uint32_t offset = 0;
+
+    if (max < min) {
+        uint32_t t = min;
+        min = max;
+        max = t;
+    }
 
     while (max - min > 8) {
         offset = (min + max) >> 1;
