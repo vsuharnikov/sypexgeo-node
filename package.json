@@ -1,6 +1,6 @@
 {
 	"name"        : "sypexgeo",
-	"version"     : "0.1.0",
+	"version"     : "0.1.1",
 	"description" : "Sypex Geo API for Node.JS",
 	"keywords"    : ["sypexgeo", "geo"],
 	"homepage"    : "https://github.com/vsuharnikov/sypexgeo",
