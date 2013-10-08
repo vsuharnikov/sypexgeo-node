@@ -82,10 +82,11 @@ v8::Handle<v8::Value> SypexGeoNode::GetCountry(const v8::Arguments &args) {
 
     v8::String::AsciiValue ip(args[0]->ToString());
     const char *country = obj->geo.getCountry(*ip);
-    if (NULL == country)
+    if (NULL == country) {
         return scope.Close(v8::Null());
-    else
+    } else {
         return scope.Close(v8::String::New(country));
+    }
 }
 
 v8::Handle<v8::Value> SypexGeoNode::GetCityFull(const v8::Arguments &args) {
@@ -102,18 +103,22 @@ v8::Handle<v8::Value> SypexGeoNode::GetCityFull(const v8::Arguments &args) {
     v8::String::AsciiValue ip(args[0]->ToString());
     sxgeo_city *city = obj->geo.getCityFull(*ip);
 
-    v8::Local<v8::Object> ret = v8::Object::New();
-    ret->Set(v8::String::New("timezone"),  city->timezone ? v8::String::New(city->timezone) : v8::Null());
-    ret->Set(v8::String::New("country"),   v8::String::New(city->country));
-    ret->Set(v8::String::New("region"),    city->region ? v8::String::New(city->region) : v8::Null());
-    ret->Set(v8::String::New("name"),      v8::String::New(city->city));
-    ret->Set(v8::String::New("fips"),      v8::Integer::New(city->fips));
-    ret->Set(v8::String::New("latitude"),  v8::Number::New(city->latitude));
-    ret->Set(v8::String::New("longitude"), v8::Number::New(city->longitude));
+    if (NULL == city) {
+        return scope.Close(v8::Null());
+    } else {
+        v8::Local<v8::Object> ret = v8::Object::New();
+        ret->Set(v8::String::New("timezone"),  city->timezone ? v8::String::New(city->timezone) : v8::Null());
+        ret->Set(v8::String::New("country"),   v8::String::New(city->country));
+        ret->Set(v8::String::New("region"),    city->region ? v8::String::New(city->region) : v8::Null());
+        ret->Set(v8::String::New("name"),      v8::String::New(city->city));
+        ret->Set(v8::String::New("fips"),      v8::Integer::New(city->fips));
+        ret->Set(v8::String::New("latitude"),  v8::Number::New(city->latitude));
+        ret->Set(v8::String::New("longitude"), v8::Number::New(city->longitude));
 
-    delete city;
+        delete city;
 
-    return scope.Close(ret);
+        return scope.Close(ret);
+    }
 }
 
 v8::Handle<v8::Value> SypexGeoNode::GetCity(const v8::Arguments &args) {
@@ -130,16 +135,20 @@ v8::Handle<v8::Value> SypexGeoNode::GetCity(const v8::Arguments &args) {
     v8::String::AsciiValue ip(args[0]->ToString());
     sxgeo_city *city = obj->geo.getCity(*ip);
 
-    v8::Local<v8::Object> ret = v8::Object::New();
-    ret->Set(v8::String::New("country"),   v8::String::New(city->country));
-    ret->Set(v8::String::New("name"),      v8::String::New(city->city));
-    ret->Set(v8::String::New("fips"),      v8::Integer::New(city->fips));
-    ret->Set(v8::String::New("latitude"),  v8::Number::New(city->latitude));
-    ret->Set(v8::String::New("longitude"), v8::Number::New(city->longitude));
+    if (NULL == city) {
+        return scope.Close(v8::Null());
+    } else {
+        v8::Local<v8::Object> ret = v8::Object::New();
+        ret->Set(v8::String::New("country"),   v8::String::New(city->country));
+        ret->Set(v8::String::New("name"),      v8::String::New(city->city));
+        ret->Set(v8::String::New("fips"),      v8::Integer::New(city->fips));
+        ret->Set(v8::String::New("latitude"),  v8::Number::New(city->latitude));
+        ret->Set(v8::String::New("longitude"), v8::Number::New(city->longitude));
 
-    delete city;
+        delete city;
 
-    return scope.Close(ret);
+        return scope.Close(ret);
+    }
 }
 
 void RegisterModule(v8::Handle<v8::Object> target) {

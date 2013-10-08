@@ -78,12 +78,12 @@ wget -nc http://sypexgeo.net/files/SxGeoCity.zip -O test/runtime/SxGeoCity.zip\
 		global.expect = require('chai').expect;
 	});
 
-	grunt.registerTask('test', 'shell:downloadbase chaihelper simplemocha');
+	grunt.registerTask('test', ['shell:downloadbase', 'chaihelper', 'simplemocha']);
 
 	grunt.registerTask('jslint', 'lint');
 	grunt.registerTask('cpplint', 'shell:cpplint');
 
 	// Default task.
-	grunt.registerTask('default', 'jslint shell:cpplint shell:build test');
+	grunt.registerTask('default', ['jslint', 'shell:cpplint', 'shell:build', 'test']);
 
 };
