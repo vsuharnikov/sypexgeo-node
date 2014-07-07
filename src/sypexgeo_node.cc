@@ -7,151 +7,153 @@
 
 #include "./sypexgeo_node.h"
 #include <node.h>
+#include "nan.h"
 
-v8::Persistent<v8::FunctionTemplate> SypexGeoNode::constructor;
+using namespace v8;
 
-void SypexGeoNode::Init(v8::Handle<v8::Object> target) {
-    v8::HandleScope scope;
+Persistent<FunctionTemplate> SypexGeoNode::constructor;
 
-    v8::Local<v8::FunctionTemplate> tpl = v8::FunctionTemplate::New(SypexGeoNode::New);
-    v8::Local<v8::String> name = v8::String::NewSymbol("Geo");
+void SypexGeoNode::Init(Handle<Object> target) {
+    NanScope();
 
-    SypexGeoNode::constructor = v8::Persistent<v8::FunctionTemplate>::New(tpl);
-    SypexGeoNode::constructor->InstanceTemplate()->SetInternalFieldCount(1);
-    SypexGeoNode::constructor->SetClassName(name);
+    Local<String> name = NanNew<String>("Geo");
+    Local<FunctionTemplate> tpl = NanNew<FunctionTemplate>(SypexGeoNode::New);
+    NanAssignPersistent(constructor, tpl);
 
-    NODE_SET_PROTOTYPE_METHOD(SypexGeoNode::constructor, "getCountry", SypexGeoNode::GetCountry);
-    NODE_SET_PROTOTYPE_METHOD(SypexGeoNode::constructor, "getCityFull", SypexGeoNode::GetCityFull);
-    NODE_SET_PROTOTYPE_METHOD(SypexGeoNode::constructor, "getCity", SypexGeoNode::GetCity);
+    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+    tpl->SetClassName(name);
 
-    target->Set(v8::String::NewSymbol("MODE_MEMORY"), v8::Integer::New(SypexGeo::MODE_MEMORY));
-    target->Set(name, SypexGeoNode::constructor->GetFunction());
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getCountry",  GetCountry);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getCityFull", GetCityFull);
+    NODE_SET_PROTOTYPE_METHOD(tpl, "getCity",     GetCity);
+
+    target->Set(NanNew<String>("MODE_MEMORY"), NanNew<Integer>(SypexGeo::MODE_MEMORY));
+    target->Set(name, tpl->GetFunction());
 }
 
 SypexGeoNode::SypexGeoNode()
     : node::ObjectWrap() {}
 
-v8::Handle<v8::Value> SypexGeoNode::New(const v8::Arguments &args) {
-    v8::HandleScope scope;
+NAN_METHOD(SypexGeoNode::New) {
+    NanScope();
 
-    if (!args.IsConstructCall()) {
-        return v8::ThrowException(v8::Exception::TypeError(
-            v8::String::New("Use the new operator to create instances of this object."))
-        );
-    }
+    if (!args.IsConstructCall())
+        NanThrowTypeError("Use the new operator to create instances of this object.");
 
-    if (args.Length() < 2) {
-        return v8::ThrowException(v8::Exception::TypeError(
-            v8::String::New("You need specify path to db file and mode.")
-        ));
-    }
+    if (args.Length() < 2)
+        NanThrowTypeError("You need specify path to db file and mode.");
 
     SypexGeoNode *obj = new SypexGeoNode();
-    v8::String::AsciiValue path(args[0]->ToString());
 
-    uint8_t code = obj->geo.open(*path, args[1]->ToInteger()->Value());
+    size_t count;
+    char* path = NanCString(args[0]->ToString(), &count);
+    uint8_t code = obj->geo.open(path, (int8_t)args[1]->ToInteger()->Value());
+    delete path;
+
     switch (code) {
         case SYPEXGEO_ERROR_FILE_NOT_FOUND:
-            return v8::ThrowException(v8::Exception::TypeError(
-                v8::String::New("File not found.")
-            ));
+            NanThrowTypeError("File not found.");
         break;
 
         case SYPEXGEO_ERROR_INVALID_TAG:
-            return v8::ThrowException(v8::Exception::TypeError(
-                v8::String::New("Invalid file format.")
-            ));
+            NanThrowTypeError("Invalid file format.");
         break;
     }
 
     obj->Wrap(args.This());
 
-    return args.This();
+    NanReturnValue(args.This());
 }
 
-v8::Handle<v8::Value> SypexGeoNode::GetCountry(const v8::Arguments &args) {
-    v8::HandleScope scope;
+NAN_METHOD(SypexGeoNode::GetCountry) {
+    NanScope();
 
-    if (args.Length() < 1) {
-        return v8::ThrowException(v8::Exception::TypeError(
-            v8::String::New("You need specify ip.")
-        ));
-    }
+    if (args.Length() < 1)
+        NanThrowTypeError("You need specify ip.");
 
     SypexGeoNode *obj = ObjectWrap::Unwrap<SypexGeoNode>(args.This());
 
-    v8::String::AsciiValue ip(args[0]->ToString());
-    const char *country = obj->geo.getCountry(*ip);
+    size_t count;
+    char* ip = NanCString(args[0]->ToString(), &count);
+    const char *country = obj->geo.getCountry(ip);
+    delete ip;
+
     if (NULL == country) {
-        return scope.Close(v8::Null());
+        NanReturnValue( NanNull() );
     } else {
-        return scope.Close(v8::String::New(country));
+        NanReturnValue( NanNew<String>(country) );
     }
 }
 
-v8::Handle<v8::Value> SypexGeoNode::GetCityFull(const v8::Arguments &args) {
-    v8::HandleScope scope;
+NAN_METHOD(SypexGeoNode::GetCityFull) {
+    NanScope();
+
+    if (args.Length() < 1)
+        NanThrowTypeError("You need specify ip.");
+
+    SypexGeoNode *obj = ObjectWrap::Unwrap<SypexGeoNode>(args.This());
+
+    size_t count;
+    char* ip = NanCString(args[0]->ToString(), &count);
+    sxgeo_city *city = obj->geo.getCityFull(ip);
+    delete ip;
+
+    if (NULL == city) {
+        NanReturnValue( NanNull() );
+    } else {
+        Local<Object> ret = NanNew<Object>();
+
+        if(city->timezone)
+            ret->Set(NanNew<String>("timezone"), NanNew<String>(city->timezone));
+        else
+            ret->Set(NanNew<String>("timezone"), NanNull());
+
+        if(city->region)
+            ret->Set(NanNew<String>("region"), NanNew<String>(city->region));
+        else
+            ret->Set(NanNew<String>("region"), NanNull());
+
+        ret->Set(NanNew<String>("country"),   NanNew<String>(city->country));
+        ret->Set(NanNew<String>("name"),      NanNew<String>(city->city));
+        ret->Set(NanNew<String>("fips"),      NanNew<Integer>(city->fips));
+        ret->Set(NanNew<String>("latitude"),  NanNew<Number>(city->latitude));
+        ret->Set(NanNew<String>("longitude"), NanNew<Number>(city->longitude));
+
+        delete city;
+        NanReturnValue( ret );
+    }
+}
+
+NAN_METHOD(SypexGeoNode::GetCity) {
+    NanScope();
 
     if (args.Length() < 1) {
-        return v8::ThrowException(v8::Exception::TypeError(
-            v8::String::New("You need specify ip.")
-        ));
+        NanThrowTypeError("You need specify ip.");
     }
 
     SypexGeoNode *obj = ObjectWrap::Unwrap<SypexGeoNode>(args.This());
 
-    v8::String::AsciiValue ip(args[0]->ToString());
-    sxgeo_city *city = obj->geo.getCityFull(*ip);
+    size_t count;
+    char* ip = NanCString(args[0]->ToString(), &count);
+    sxgeo_city *city = obj->geo.getCity(ip);
+    delete ip;
 
     if (NULL == city) {
-        return scope.Close(v8::Null());
+        NanReturnValue( NanNull() );
     } else {
-        v8::Local<v8::Object> ret = v8::Object::New();
-        ret->Set(v8::String::New("timezone"),  city->timezone ? v8::String::New(city->timezone) : v8::Null());
-        ret->Set(v8::String::New("country"),   v8::String::New(city->country));
-        ret->Set(v8::String::New("region"),    city->region ? v8::String::New(city->region) : v8::Null());
-        ret->Set(v8::String::New("name"),      v8::String::New(city->city));
-        ret->Set(v8::String::New("fips"),      v8::Integer::New(city->fips));
-        ret->Set(v8::String::New("latitude"),  v8::Number::New(city->latitude));
-        ret->Set(v8::String::New("longitude"), v8::Number::New(city->longitude));
+        Local<Object> ret = NanNew<Object>();
+        ret->Set(NanNew<String>("country"),   NanNew<String>(city->country));
+        ret->Set(NanNew<String>("name"),      NanNew<String>(city->city));
+        ret->Set(NanNew<String>("fips"),      NanNew<Integer>(city->fips));
+        ret->Set(NanNew<String>("latitude"),  NanNew<Number>(city->latitude));
+        ret->Set(NanNew<String>("longitude"), NanNew<Number>(city->longitude));
 
         delete city;
-
-        return scope.Close(ret);
+        NanReturnValue(ret);
     }
 }
 
-v8::Handle<v8::Value> SypexGeoNode::GetCity(const v8::Arguments &args) {
-    v8::HandleScope scope;
-
-    if (args.Length() < 1) {
-        return v8::ThrowException(v8::Exception::TypeError(
-            v8::String::New("You need specify ip.")
-        ));
-    }
-
-    SypexGeoNode *obj = ObjectWrap::Unwrap<SypexGeoNode>(args.This());
-
-    v8::String::AsciiValue ip(args[0]->ToString());
-    sxgeo_city *city = obj->geo.getCity(*ip);
-
-    if (NULL == city) {
-        return scope.Close(v8::Null());
-    } else {
-        v8::Local<v8::Object> ret = v8::Object::New();
-        ret->Set(v8::String::New("country"),   v8::String::New(city->country));
-        ret->Set(v8::String::New("name"),      v8::String::New(city->city));
-        ret->Set(v8::String::New("fips"),      v8::Integer::New(city->fips));
-        ret->Set(v8::String::New("latitude"),  v8::Number::New(city->latitude));
-        ret->Set(v8::String::New("longitude"), v8::Number::New(city->longitude));
-
-        delete city;
-
-        return scope.Close(ret);
-    }
-}
-
-void RegisterModule(v8::Handle<v8::Object> target) {
+void RegisterModule(Handle<Object> target) {
     SypexGeoNode::Init(target);
 }
 

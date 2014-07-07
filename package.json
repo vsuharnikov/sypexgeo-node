@@ -16,7 +16,12 @@
 
 	"main" : "./lib/sypexgeo.js",
 	"scripts" : {
-		"test" : "grunt test"
+		"test" : "grunt test",
+		"install": "node-gyp rebuild"
+	},
+
+	"dependencies": {
+		"nan"                : "*"
 	},
 
 	"devDependencies" : {
