@@ -10,20 +10,23 @@
 
 #include "./sypexgeo.h"
 #include <node.h>
+#include "nan.h"
+
+using namespace v8;
 
 class SypexGeoNode : public node::ObjectWrap {
     public:
-        static v8::Persistent<v8::FunctionTemplate> constructor;
-        static void Init(v8::Handle<v8::Object> target);
+        static Persistent<FunctionTemplate> constructor;
+        static void Init(Handle<Object> target);
 
     protected:
         SypexGeoNode();
 
-        static v8::Handle<v8::Value> New(const v8::Arguments& args);
+        static NAN_METHOD(New);
 
-        static v8::Handle<v8::Value> GetCountry(const v8::Arguments& args);
-        static v8::Handle<v8::Value> GetCityFull(const v8::Arguments& args);
-        static v8::Handle<v8::Value> GetCity(const v8::Arguments& args);
+        static NAN_METHOD(GetCountry);
+        static NAN_METHOD(GetCityFull);
+        static NAN_METHOD(GetCity);
 
         SypexGeo geo;
 };
