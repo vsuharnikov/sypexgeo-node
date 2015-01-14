@@ -66,6 +66,7 @@ NAN_METHOD(SypexGeoNode::New) {
 }
 
 NAN_METHOD(SypexGeoNode::GetCountry) {
+    printf("here lol");
     NanScope();
 
     if (args.Length() < 1)
