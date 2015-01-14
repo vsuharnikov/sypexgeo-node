@@ -7,7 +7,7 @@
 
 #include "./sypexgeo.h"
 #include <arpa/inet.h>
-#if defined(Q_OS_MAC)
+#if defined(__APPLE__)
 #include <libkern/OSByteOrder.h>
 #define bswap_16(x) OSSwapInt16(x)
 #define bswap_32(x) OSSwapInt32(x)
