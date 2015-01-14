@@ -76,6 +76,7 @@ NAN_METHOD(SypexGeoNode::GetCountry) {
     size_t count;
     char* ip = NanCString(args[0]->ToString(), &count);
     const char *country = obj->geo.getCountry(ip);
+    printf("%s", country);
     delete ip;
 
     if (NULL == country) {
