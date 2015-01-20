@@ -66,6 +66,7 @@ NAN_METHOD(SypexGeoNode::New) {
 }
 
 NAN_METHOD(SypexGeoNode::GetCountry) {
+    printf("here lol");
     NanScope();
 
     if (args.Length() < 1)
@@ -76,6 +77,7 @@ NAN_METHOD(SypexGeoNode::GetCountry) {
     size_t count;
     char* ip = NanCString(args[0]->ToString(), &count);
     const char *country = obj->geo.getCountry(ip);
+    printf("%s", country);
     delete ip;
 
     if (NULL == country) {
