@@ -1,89 +1,97 @@
+/**
+ * Copyright by Vyatcheslav Suharnikov and sypexgeo-node contributors
+ * See contributors list in AUTHORS
+ *
+ * See license text in LICENSE file
+ */
+
 'use strict';
 
-module.exports = function(grunt) {
-	grunt.loadNpmTasks('grunt-simple-mocha');
-	grunt.loadNpmTasks('grunt-shell');
+module.exports = function (grunt) {
+  grunt.loadNpmTasks('grunt-simple-mocha');
+  grunt.loadNpmTasks('grunt-shell');
 
-	var downloadBaseCommand = 'mkdir test/runtime/;test -f test/runtime/SxGeoCity.dat || (\
-wget -nc http://sypexgeo.net/files/SxGeoCity.zip -O test/runtime/SxGeoCity.zip\
-&& unzip test/runtime/SxGeoCity.zip -d test/runtime/)';
+  var downloadBaseCommand = 'mkdir -p tests/runtime/;test -f tests/runtime/SxGeoCity.dat || (\
+wget -nc http://sypexgeo.net/files/SxGeoCity_utf8.zip -O tests/runtime/SxGeoCity_utf8.zip\
+&& unzip tests/runtime/SxGeoCity_utf8.zip -d tests/runtime/)';
 
-	grunt.initConfig({
-		pkg: '<json:package.json>',
-		lint: {
-			files: ['grunt.js', 'lib/**/*.js'] //, 'test/**/*.js'] // have no idea, how lint chaijs's bdd code
-		},
-		watch: {
-			files: '<config:lint.files>',
-			tasks: 'default'
-		},
-		jshint: {
-			options: {
-				curly    : true,
-				eqeqeq   : true,
-				immed    : true,
-				latedef  : true,
-				newcap   : true,
-				noarg    : true,
-				sub      : true,
-				undef    : true,
-				boss     : true,
-				eqnull   : true,
-				node     : true,
-				multistr : true
-			},
-			globals: {
-				exports  : true,
-				expect   : true
-			}
-		},
-		simplemocha: {
-			all: {
-				src: ['test/**/*.js'],
-				options: {
-					globals:     ['chai'],
-					timeout:     3000,
-					ui:          'exports',
-					reporter:    'tap',
-					ignoreLeaks: false
-				}
-			}
-		},
-		shell: {
-			cpplint: {
-				command: './tools/cpplint.py --filter=-whitespace/parens,-whitespace/line_length src/*.*',
-				stdout: true,
-				stderr: true
-			},
+  grunt.initConfig({
+    pkg: '<json:package.json>',
+    simplemocha: {
+      all: {
+        src: ['tests/**/*.js'],
+        options: {
+          globals: ['chai'],
+          timeout: 3000,
+          ui: 'exports',
+          reporter: 'tap',
+          ignoreLeaks: false
+        }
+      }
+    },
+    cpplint: {
+      files: [
+        'src/xyz/vyvid/sypexgeo/bindings/nodejs/sypexgeo_node.cc',
+        'src/xyz/vyvid/sypexgeo/bindings/nodejs/sypexgeo_node.h',
 
-			build: {
-				command: 'npm build .',
-				stdout: true,
-				stderr: true
-			},
+        'src/xyz/vyvid/sypexgeo/db.cc',
+        'src/xyz/vyvid/sypexgeo/db.h',
+        'src/xyz/vyvid/sypexgeo/errors.h',
+        'src/xyz/vyvid/sypexgeo/header.h',
+        'src/xyz/vyvid/sypexgeo/location.cc',
+        'src/xyz/vyvid/sypexgeo/location.h',
+        'src/xyz/vyvid/sypexgeo/raw_city_access.h',
+        'src/xyz/vyvid/sypexgeo/raw_country_access.h',
+        'src/xyz/vyvid/sypexgeo/raw_region_access.h',
 
-			removebase: {
-				command: 'rm test/runtime/SxGeoCity.dat'
-			},
+        'src/xyz/vyvid/sypexgeo/util/string_builder.h',
+        'src/xyz/vyvid/sypexgeo/util/uint24_t.h'
+      ],
+      reporter: 'spec',
+      verbosity: 0,
+      filters: {
+        whitespace: {
+          braces: false,
+          include_alpha: true
+        },
+        readability: {
+          streams: false
+        }
+      },
+      linelength: 120,
+      // This could be an array of strings or a comma separated string
+      extensions: [
+        'cc',
+        'h'
+      ]
+    },
+    shell: {
+      build: {
+        command: 'node-gyp build .',
+        stdout: true,
+        stderr: true
+      },
 
-			downloadbase: {
-				command: downloadBaseCommand,
-				stdout: true,
-				stderr: true
-			}
-		}
-	});
+      removebase: {
+        command: 'rm test/runtime/SxGeoCity.dat'
+      },
 
-	grunt.registerTask('chaihelper', 'Register chai helpers', function() {
-		global.expect = require('chai').expect;
-	});
+      downloadbase: {
+        command: downloadBaseCommand,
+        stdout: true,
+        stderr: true
+      }
+    }
+  });
 
-	grunt.registerTask('test', ['shell:downloadbase', 'chaihelper', 'simplemocha']);
+  grunt.loadNpmTasks('node-cpplint');
 
-	grunt.registerTask('jslint', 'lint');
-	grunt.registerTask('cpplint', 'shell:cpplint');
+  grunt.registerTask('chaihelper', 'Register chai helpers', function () {
+    global.expect = require('chai').expect;
+  });
 
-	// Default task.
-	grunt.registerTask('default', ['jslint', 'shell:cpplint', 'shell:build', 'test']);
+  grunt.registerTask('test', ['shell:downloadbase', 'chaihelper', 'simplemocha']);
 
+  // Default task.
+  grunt.registerTask('default', ['cpplint', 'shell:build', 'test']);
 };
