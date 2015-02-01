@@ -1,5 +1,3 @@
-# sypexgeo
-
 Unofficial [Sypex Geo API](https://sypexgeo.net) bindings for Node.JS.
 
 	The latest version works only with:
@@ -15,9 +13,11 @@ Unofficial [Sypex Geo API](https://sypexgeo.net) bindings for Node.JS.
 ### Using
 
 ```javascript
-var sypex = require('sypexgeo');
+var sypex = require('sypexgeo-vyvid');
 var geoDb = new sypex.Geo('/a/full/path/to/the/SypexGeoCity.dat');
-var locationInfo = geoDb.find('ip here');
+var location = geoDb.find('46.148.53.103');
+
+console.log(JSON.stringify(location, null, '  '));
 ```
 
 ## Documentation
