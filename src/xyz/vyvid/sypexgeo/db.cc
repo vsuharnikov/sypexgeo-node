@@ -7,6 +7,7 @@
 
 #include "xyz/vyvid/sypexgeo/db.h"
 
+#include <cstring>
 #include <arpa/inet.h>
 
 #if defined(__APPLE__)
