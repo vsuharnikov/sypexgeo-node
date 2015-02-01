@@ -7,7 +7,6 @@
 
 #include "xyz/vyvid/sypexgeo/db.h"
 
-#include <cstring>
 #include <arpa/inet.h>
 
 #if defined(__APPLE__)
@@ -20,6 +19,8 @@
 
 #include <byteswap.h>
 #endif  // defined(__APPLE__)
+
+#include <cstring>
 
 #define SXGEO_ASCII_ZERO_CODE 48
 

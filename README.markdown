@@ -1,10 +1,14 @@
 Unofficial [Sypex Geo API](https://sypexgeo.net) bindings for Node.JS.
 
-	The latest version works only with:
+    The latest version works only with:
     * SypexGeo 2.2! See changelog.
     * SxGeoCity_utf8 (See Gruntfile.js)
 
 ## Getting Started
+
+### Requirements
+
+* g++ >= 4.8 for supporting C++11.
 
 ### Setup
 
@@ -33,7 +37,8 @@ var geoDb = new sypex.Geo('/var/www/geo/SypexGeoCity.dat');
 #### Parameters
 
 1. {String} _filePath_ - A full path to the SypexGeo DB file.
-2. **[deprecated]** {Number} _mode_ - Specifies a behaviour. **It will be removed in 0.3.0**
+2. **[deprecated]** {Number} _mode_ - Specifies a behaviour. Available only **SXGEO_MEMORY**.
+  **It will be removed in 0.3.0**
 
 The _mode_ is always **SXGEO_BATCH | SXGEO_MEMORY** regardless of arguments you pass in.
 
@@ -172,7 +177,8 @@ Works with SypexGeo 2.2.
 * [-] The _fips_ field has been removed (removed from a database);
 * [+] The _find_ and _getCountryIso_ methods have been added;
 * [!] The _getCountry_, _getCity_ and _getCityFull_ now is deprecated;
-* [!] Completely rewritten code.
+* [!] Completely rewritten code;
+* [!] Requires GCC 4.8.
 
 ### 0.1.*
 

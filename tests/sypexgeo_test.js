@@ -22,12 +22,6 @@ module.exports = {
       }
     },
 
-    '#getCountry': {
-      'should return valid country': function () {
-        expect(geoDb.getCountry('188.246.160.178')).to.be.eql('RU');
-      }
-    },
-
     '#find': {
       'should return valid structure:': [
         function () {
@@ -84,41 +78,53 @@ module.exports = {
       ]
     },
 
-    '#getCityFull': {
-      'should return valid structure:': [
-        function () {
-          var city = geoDb.getCityFull('46.148.53.103');
+    'deprecated': {
+      'mode': function () {
+        expect(sypex).to.have.property('MODE_MEMORY');
+      },
+
+      '#getCountry': {
+        'should return valid country': function () {
+          expect(geoDb.getCountry('188.246.160.178')).to.be.eql('RU');
+        }
+      },
+
+      '#getCityFull': {
+        'should return valid structure:': [
+          function () {
+            var city = geoDb.getCityFull('46.148.53.103');
+
+            expect(city).to.have.property('country', 'RU');
+            expect(city).to.have.property('region', 'Нижегородская область');
+            expect(city).to.have.property('name', 'Арзамас');
+            expect(city).to.have.property('latitude').closeTo(55.4, 0.01);
+            expect(city).to.have.property('longitude').closeTo(43.83992, 0.01);
+          },
+
+          function () {
+            var city = geoDb.getCityFull('5.9.61.25');
+
+            expect(city).to.have.property('country', 'DE');
+            expect(city).to.have.property('latitude').closeTo(51.5, 0.01);
+            expect(city).to.have.property('longitude').closeTo(10.5, 0.01);
+          }
+        ]
+      },
+
+      '#getCity': {
+        'should return valid structure': function () {
+          var city = geoDb.getCity('46.148.53.103');
 
           expect(city).to.have.property('country', 'RU');
-          expect(city).to.have.property('region', 'Нижегородская область');
           expect(city).to.have.property('name', 'Арзамас');
           expect(city).to.have.property('latitude').closeTo(55.4, 0.01);
           expect(city).to.have.property('longitude').closeTo(43.83992, 0.01);
         },
 
-        function () {
-          var city = geoDb.getCityFull('5.9.61.25');
-
-          expect(city).to.have.property('country', 'DE');
-          expect(city).to.have.property('latitude').closeTo(51.5, 0.01);
-          expect(city).to.have.property('longitude').closeTo(10.5, 0.01);
+        'should return valid cities': function () {
+          var city = geoDb.getCity('188.246.160.178');
+          expect(city.name).to.be.eql('Москва');
         }
-      ]
-    },
-
-    '#getCity': {
-      'should return valid structure': function () {
-        var city = geoDb.getCity('46.148.53.103');
-
-        expect(city).to.have.property('country', 'RU');
-        expect(city).to.have.property('name', 'Арзамас');
-        expect(city).to.have.property('latitude').closeTo(55.4, 0.01);
-        expect(city).to.have.property('longitude').closeTo(43.83992, 0.01);
-      },
-
-      'should return valid cities': function () {
-        var city = geoDb.getCity('188.246.160.178');
-        expect(city.name).to.be.eql('Москва');
       }
     }
   }
