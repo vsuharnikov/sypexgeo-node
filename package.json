@@ -27,10 +27,11 @@
   },
   "main": "./lib/sypexgeo.js",
   "scripts": {
-    "test": "grunt test",
-    "install": "node-gyp rebuild"
+    "test": "grunt test"
   },
   "dependencies": {
+    "node-gyp": "~1.0.2",
+    "nan": "~1.6.1"
   },
   "devDependencies": {
     "chai": "~1.10.0",
@@ -38,9 +39,7 @@
     "grunt-shell": "~1.1.1",
     "grunt-simple-mocha": "~0.4.0",
     "mocha": "~2.1.0",
-    "node-cpplint": "^0.4.0",
-    "node-gyp": "~1.0.2",
-    "nan": "~1.6.1"
+    "node-cpplint": "^0.4.0"
   },
   "engines": {
     "node": ">= 0.6.0"
