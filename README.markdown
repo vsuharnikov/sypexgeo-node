@@ -44,7 +44,7 @@ The _mode_ is always **SXGEO_BATCH | SXGEO_MEMORY** regardless of arguments you 
 
 ### find
 
-Looks up a location by its _IP_.
+Looks up for a location by its _IP_.
 
 ```javascript
 var location = geoDb.find('46.148.53.103');

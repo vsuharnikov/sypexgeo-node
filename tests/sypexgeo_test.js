@@ -23,8 +23,8 @@ module.exports = {
     },
 
     '#find': {
-      'should return valid structure:': [
-        function () {
+      'should return valid structure:': {
+        'sample': function () {
           var city = geoDb.find('46.148.53.103');
 
           expect(city).to.have.property('latitude').closeTo(55.4, 0.01);
@@ -57,7 +57,7 @@ module.exports = {
           });
         },
 
-        function () {
+        'only country': function () {
           var country = geoDb.find('5.9.61.25'); // Haven't region and city information.
 
           expect(country).to.have.property('latitude').closeTo(51.5, 0.01);
@@ -74,8 +74,41 @@ module.exports = {
 
           expect(country).to.not.have.property('region');
           expect(country).to.not.have.property('city');
+        },
+
+        'issue #5': function () {
+          var city = geoDb.find('89.254.208.188');
+
+          expect(city).to.have.property('latitude').closeTo(58.59665, 0.0001);
+          expect(city).to.have.property('longitude').closeTo(49.66007, 0.0001);
+
+          expect(city).to.have.property('country').deep.equals({
+            id: 185,
+            iso: 'RU',
+            name: {
+              en: 'Russia',
+              ru: 'Россия'
+            }
+          });
+
+          expect(city).to.have.property('region').deep.equals({
+            id: 548389,
+            iso: 'RU-KIR',
+            name: {
+              en: 'Kirovskaya Oblast\'',
+              ru: 'Кировская область'
+            }
+          });
+
+          expect(city).to.have.property('city').deep.equals({
+            id: 548408,
+            name: {
+              en: 'Kirov',
+              ru: 'Киров'
+            }
+          });
         }
-      ]
+      }
     },
 
     'deprecated': {

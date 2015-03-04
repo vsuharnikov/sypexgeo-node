@@ -244,14 +244,14 @@ std::uint32_t Db::searchIdx(std::uint32_t ipn, std::uint32_t min, std::uint32_t 
   while (max - min > 8) {
     offset = (min + max) >> 1;
 
-    if (ipn > bswap_32(m_idx[offset]))
+    if (ipn > bswap_32(m_idx[offset])) {
       min = offset;
-    else
+    } else {
       max = offset;
+    }
   }
 
-  while (ipn > bswap_32(m_idx[min]) && min < max)
-    min++;
+  while (min++ < max && ipn > bswap_32(m_idx[min])) {}
 
   return min;
 }

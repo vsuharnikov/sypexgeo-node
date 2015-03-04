@@ -19,6 +19,9 @@ int main() {
 
     auto city2 = db->find("46.148.53.103");
     std::cout << "=== City at 46.148.53.103 ===" << std::endl << (std::string) *city2 << std::endl;
+
+    auto city3 = db->find("89.254.208.188");
+    std::cout << "=== City at 89.254.208.188 ===" << std::endl << (std::string) *city3 << std::endl;
   } catch (std::exception const &e) {
     std::cout << "Error: " << e.what() << std::endl;
   }
