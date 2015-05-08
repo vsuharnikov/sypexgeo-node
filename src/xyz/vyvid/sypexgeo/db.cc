@@ -175,8 +175,8 @@ std::uint32_t Db::getLocationOffset(const char *ip) const {
 
     min = part > 0 ? part * header.range : 0;
     max = part > header.m_idx_len
-      ? header.db_items
-      : (part + 1) * header.range;
+          ? header.db_items
+          : (part + 1) * header.range;
 
     if (min < minIndex)
       min = minIndex;
@@ -251,7 +251,7 @@ std::uint32_t Db::searchIdx(std::uint32_t ipn, std::uint32_t min, std::uint32_t 
     }
   }
 
-  while (min++ < max && ipn > bswap_32(m_idx[min])) {}
+  while (ipn > bswap_32(m_idx[min]) && min++ <= max) { }
 
   return min;
 }
@@ -266,8 +266,8 @@ std::uint8_t Db::getFirstIpByte(const char *ip) const {
   }
 
   return (result > 0 && result < 256)
-    ? static_cast<std::uint8_t>(result)
-    : 0;
+         ? static_cast<std::uint8_t>(result)
+         : 0;
 }
 
 void Db::readMeta(std::istream *source) {

@@ -12,7 +12,10 @@ var geoDb = null;
 
 module.exports = {
   before: function () {
-    geoDb = new sypex.Geo(__dirname + '/runtime/SxGeoCity.dat');
+    var dbPath = __dirname + '/runtime/SxGeoCity.dat';
+
+    geoDb = new sypex.Geo(dbPath);
+    console.log("Checking ", dbPath);
   },
 
   'sypex::Geo': {
@@ -24,90 +27,102 @@ module.exports = {
 
     '#find': {
       'should return valid structure:': {
-        'sample': function () {
-          var city = geoDb.find('46.148.53.103');
-
-          expect(city).to.have.property('latitude').closeTo(55.4, 0.01);
-          expect(city).to.have.property('longitude').closeTo(43.83992, 0.01);
-
-          expect(city).to.have.property('country').deep.equals({
+        'sample': checkCity.bind(null, '46.148.53.103', {
+          latitude: 55.3948,
+          longitude: 43.8399,
+          country: {
             id: 185,
             iso: 'RU',
             name: {
               en: 'Russia',
               ru: 'Россия'
             }
-          });
-
-          expect(city).to.have.property('region').deep.equals({
+          },
+          region: {
             id: 559838,
             iso: 'RU-NIZ',
             name: {
               en: 'Nizhegorodskaya Oblast\'',
               ru: 'Нижегородская область'
             }
-          });
-
-          expect(city).to.have.property('city').deep.equals({
+          },
+          city: {
             id: 580724,
             name: {
               en: 'Arzamas',
               ru: 'Арзамас'
             }
-          });
-        },
+          }
+        }),
 
-        'only country': function () {
-          var country = geoDb.find('5.9.61.25'); // Haven't region and city information.
-
-          expect(country).to.have.property('latitude').closeTo(51.5, 0.01);
-          expect(country).to.have.property('longitude').closeTo(10.5, 0.01);
-
-          expect(country).to.have.property('country').deep.equals({
+        'only country': checkCountry.bind(null, '5.9.61.25', {
+          latitude: 51.5,
+          longitude: 10.5,
+          country: {
             id: 56,
             iso: 'DE',
             name: {
               en: 'Germany',
               ru: 'Германия'
             }
-          });
+          }
+        }),
 
-          expect(country).to.not.have.property('region');
-          expect(country).to.not.have.property('city');
-        },
-
-        'issue #5': function () {
-          var city = geoDb.find('89.254.208.188');
-
-          expect(city).to.have.property('latitude').closeTo(58.59665, 0.0001);
-          expect(city).to.have.property('longitude').closeTo(49.66007, 0.0001);
-
-          expect(city).to.have.property('country').deep.equals({
+        'issue #5': checkCity.bind(null, '89.254.208.188', {
+          latitude: 58.59665,
+          longitude: 49.66007,
+          country: {
             id: 185,
             iso: 'RU',
             name: {
               en: 'Russia',
               ru: 'Россия'
             }
-          });
-
-          expect(city).to.have.property('region').deep.equals({
+          },
+          region: {
             id: 548389,
             iso: 'RU-KIR',
             name: {
               en: 'Kirovskaya Oblast\'',
               ru: 'Кировская область'
             }
-          });
-
-          expect(city).to.have.property('city').deep.equals({
+          },
+          city: {
             id: 548408,
             name: {
               en: 'Kirov',
               ru: 'Киров'
             }
-          });
-        }
+          }
+        }),
+
+        'issue #7': checkCity.bind(null, '128.72.86.166', {
+          latitude: 55.7522,
+          longitude: 37.6156,
+          country: {
+            id: 185,
+            iso: 'RU',
+            name: {
+              en: 'Russia',
+              ru: 'Россия'
+            }
+          },
+          region: {
+            id: 524894,
+            iso: 'RU-MOW',
+            name: {
+              en: 'Moskva',
+              ru: 'Москва'
+            }
+          },
+          city: {
+            id: 524901,
+            name: {
+              en: 'Moscow',
+              ru: 'Москва'
+            }
+          }
+        })
       }
     },
 
@@ -162,3 +177,27 @@ module.exports = {
     }
   }
 };
+
+function checkCity(ip, expected) {
+  var city = geoDb.find(ip);
+
+  expect(city, "country").to.have.property('country').deep.equals(expected.country);
+  expect(city, "region").to.have.property('region').deep.equals(expected.region);
+  expect(city, "city").to.have.property('city').deep.equals(expected.city);
+
+  expect(city).to.have.property('latitude').closeTo(expected.latitude, 0.0001);
+  expect(city).to.have.property('longitude').closeTo(expected.longitude, 0.0001);
+}
+
+function checkCountry(ip, expected) {
+  var country = geoDb.find(ip);
+
+  expect(country, "country").to.have.property('country').deep.equals(expected.country);
+
+  // Should not have a region and a city information.
+  expect(country, "region").to.not.have.property('region');
+  expect(country, "country").to.not.have.property('city');
+
+  expect(country).to.have.property('latitude').closeTo(expected.latitude, 0.01);
+  expect(country).to.have.property('longitude').closeTo(expected.longitude, 0.01);
+}
