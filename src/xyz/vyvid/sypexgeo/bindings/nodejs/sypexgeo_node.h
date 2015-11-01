@@ -8,18 +8,17 @@
 #ifndef SRC_XYZ_VYVID_SYPEXGEO_BINDINGS_NODEJS_SYPEXGEO_NODE_H_
 #define SRC_XYZ_VYVID_SYPEXGEO_BINDINGS_NODEJS_SYPEXGEO_NODE_H_
 
-#include <node.h>
 #include <nan.h>
 #include <string>
 #include <memory>
 
 #include "xyz/vyvid/sypexgeo/db.h"
 
-class SypexGeoNode : public node::ObjectWrap {
+class SypexGeoNode: public Nan::ObjectWrap {
  public:
-  static v8::Persistent<v8::FunctionTemplate> constructor;
+  static Nan::Persistent<v8::Function> constructor;
 
-  static void Init(v8::Handle<v8::Object> target);
+  static void Init(v8::Local <v8::Object> exports);
 
  protected:
   std::unique_ptr<xyz::vyvid::sypexgeo::Db> db;
@@ -28,7 +27,7 @@ class SypexGeoNode : public node::ObjectWrap {
 
   void Connect(const char *filePath);
 
-  static v8::Local<v8::Object> GetNames(const std::string &englishName, const std::string &russianName);
+  static v8::Local <v8::Object> GetNames(const std::string &englishName, const std::string &russianName);
 
   static NAN_METHOD(New);
 

@@ -11,9 +11,7 @@
 
 int main() {
   try {
-    auto db = xyz::vyvid::sypexgeo::Db::fromFile(
-      "/Users/freezy/projects/github/sypexgeo-node/tests/runtime/SxGeoCity.dat"
-    );
+    auto db = xyz::vyvid::sypexgeo::Db::fromFile("tests/runtime/SxGeoCity.dat");
 
     const std::string cityIps[] = {
       "77.50.211.86",

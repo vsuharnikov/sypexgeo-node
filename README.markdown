@@ -94,22 +94,22 @@ An object describes a found location:
 * {Number} _longitude_ - **5** digits (e.g., **55.39485**)  after the decimal point if the city is detected. Otherwise, **2** (e.g. **51.5**)
 * {Number} _latitude_
 * {Object} _country_
-	* {Number} _id_
-	* {String} _iso_
-	* {Object} _name_
-    	* {String} en
-    	* {String} ru
+  * {Number} _id_
+  * {String} _iso_
+  * {Object} _name_
+      * {String} en
+      * {String} ru
 * **[optional]** {Object} _region_ - The information about a region. Omitted if wasn't detected
-	* {Number} _id_
-	* {String} _iso_
-	* {Object} _name_
-    	* {String} en
-    	* {String} ru
+  * {Number} _id_
+  * {String} _iso_
+  * {Object} _name_
+      * {String} en
+      * {String} ru
 * **[optional]** {Object} city - The information about a city. Omitted if wasn't detected
-	* {Number} _id_
-	* {Object} _name_
-    	* {String} en
-    	* {String} ru
+  * {Number} _id_
+  * {Object} _name_
+      * {String} en
+      * {String} ru
 
 ### getCountryIso
 
@@ -165,6 +165,11 @@ alias to _getCountryIso_.
 ## Contributing
 
 * Please check your code by the command: `grunt cpplint`
+* If you need a manual build, then run:
+
+    node-gyp configure
+    node-gyp install
+    node-gyp build
 
 _(Coming soon)_
 
