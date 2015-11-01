@@ -1,5 +1,5 @@
 /**
- * Copyright by Vyatcheslav Suharnikov and sypexgeo-node contributors
+ * Copyright by Vyatcheslav Suharnikov and sypexgeo-vyvid contributors
  * See contributors list in AUTHORS
  *
  * See license text in LICENSE file

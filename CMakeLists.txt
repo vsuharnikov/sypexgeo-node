@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.4)
-project(sypexgeo_node)
+project(sypexgeo_vyvid)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fno-rtti -Wall -fcxx-exceptions -fexceptions")
 
@@ -23,10 +23,8 @@ set(
 
 include_directories(
     src
-    ~/.node-gyp/0.10.35/src
-    ~/.node-gyp/0.10.35/deps/uv/include
-    ~/.node-gyp/0.10.35/deps/v8/include
+    ~/.node-gyp/4.2.1/include/node
     node_modules/nan
 )
 
-add_executable(sypexgeo_node ${SOURCE_FILES})
+add_executable(sypexgeo_vyvid ${SOURCE_FILES})

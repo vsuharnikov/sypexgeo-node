@@ -1,6 +1,6 @@
 {
   "name": "sypexgeo-vyvid",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Unnoficial Sypex Geo API bindings for Node.JS",
   "keywords": [
     "sypexgeo",
@@ -29,19 +29,19 @@
   "scripts": {
     "test": "grunt test"
   },
+  "gypfile": true,
   "dependencies": {
-    "nan": "~1.6.1"
+    "nan": "~2.1.0"
   },
   "devDependencies": {
-    "node-gyp": "~1.0.2",
-    "chai": "~1.10.0",
+    "chai": "~3.4.0",
     "grunt": "~0.4.5",
-    "grunt-shell": "~1.1.1",
+    "grunt-shell": "~1.1.2",
     "grunt-simple-mocha": "~0.4.0",
-    "mocha": "~2.1.0",
+    "mocha": "~2.3.3",
     "node-cpplint": "^0.4.0"
   },
   "engines": {
-    "node": ">= 0.6.0"
+    "node": ">= 0.10.0"
   }
 }

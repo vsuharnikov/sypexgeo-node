@@ -7,32 +7,33 @@
 
 #include "xyz/vyvid/sypexgeo/bindings/nodejs/sypexgeo_node.h"
 
-#include <string>
+#include <nan.h>
 
-v8::Persistent<v8::FunctionTemplate> SypexGeoNode::constructor;
+Nan::Persistent<v8::Function> SypexGeoNode::constructor;
 
-void SypexGeoNode::Init(v8::Handle<v8::Object> target) {
-  NanScope();
+void SypexGeoNode::Init(v8::Local<v8::Object> exports) {
+  Nan::HandleScope scope;
 
-  v8::Local<v8::String>           name = NanNew<v8::String>("Geo");
-  v8::Local<v8::FunctionTemplate> tpl  = NanNew<v8::FunctionTemplate>(SypexGeoNode::New);
-  NanAssignPersistent(constructor, tpl);
+  v8::Local<v8::String> name = Nan::New("Geo").ToLocalChecked();
 
-  tpl->InstanceTemplate()->SetInternalFieldCount(1);
+  v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(SypexGeoNode::New);
   tpl->SetClassName(name);
+  tpl->InstanceTemplate()->SetInternalFieldCount(1);
 
-  NODE_SET_PROTOTYPE_METHOD(tpl, "find", Find);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "getCountryIso", GetCountryIso);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "getCountry", GetCountryIso);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "getCityFull", GetCityFull);
-  NODE_SET_PROTOTYPE_METHOD(tpl, "getCity", GetCityFull);
+  Nan::SetPrototypeMethod(tpl, "find", Find);
+  Nan::SetPrototypeMethod(tpl, "getCountryIso", GetCountryIso);
+  Nan::SetPrototypeMethod(tpl, "getCountry", GetCountryIso);
+  Nan::SetPrototypeMethod(tpl, "getCityFull", GetCityFull);
+  Nan::SetPrototypeMethod(tpl, "getCity", GetCityFull);
 
-  target->Set(NanNew<v8::String>("MODE_MEMORY"), NanNew<v8::Integer>(2));
-  target->Set(name, tpl->GetFunction());
+  constructor.Reset(tpl->GetFunction());
+
+  exports->Set(Nan::New("MODE_MEMORY").ToLocalChecked(), Nan::New<v8::Integer>(2));
+  exports->Set(name, tpl->GetFunction());
 }
 
 SypexGeoNode::SypexGeoNode()
-  : node::ObjectWrap() {
+    : Nan::ObjectWrap() {
 }
 
 void SypexGeoNode::Connect(const char *filePath) {
@@ -40,134 +41,130 @@ void SypexGeoNode::Connect(const char *filePath) {
 }
 
 NAN_METHOD(SypexGeoNode::New) {
-  NanScope();
+  if (!info.IsConstructCall())
+    Nan::ThrowTypeError("You should use the new operator to create instances of this object.");
 
-  if (!args.IsConstructCall())
-    NanThrowTypeError("You should use the new operator to create instances of this object.");
+  if (info.Length() < 1)
+    Nan::ThrowTypeError("You should specify a path to the db file.");
 
-  if (args.Length() < 1)
-    NanThrowTypeError("You should specify a path to the db file.");
-
-  SypexGeoNode   *obj = new SypexGeoNode();
-  NanAsciiString path(args[0]);
+  SypexGeoNode *obj = new SypexGeoNode();
+  Nan::Utf8String path(info[0]);
 
   try {
     obj->Connect(*path);
   } catch (std::exception e) {
-    NanThrowTypeError(e.what());
+    Nan::ThrowTypeError(e.what());
   }
 
-  obj->Wrap(args.This());
-  NanReturnValue(args.This());
+  obj->Wrap(info.This());
+  info.GetReturnValue().Set(info.This());
 }
 
 NAN_METHOD(SypexGeoNode::Find) {
-  NanScope();
-
-  if (args.Length() < 1) {
-    NanThrowTypeError("You should specify the ip.");
+  if (info.Length() < 1) {
+    Nan::ThrowTypeError("You should specify the ip.");
   }
 
-  auto           obj      = node::ObjectWrap::Unwrap<SypexGeoNode>(args.This());
-  NanAsciiString ip(args[0]);
-  auto           location = obj->db->find(*ip);
+  auto obj = Nan::ObjectWrap::Unwrap<SypexGeoNode>(info.This());
+  Nan::Utf8String ip(info[0]);
+  auto location = obj->db->find(*ip);
 
   if (nullptr == location) {
-    NanReturnValue(NanNull());
+    info.GetReturnValue().Set(Nan::Null());
   }
 
-  v8::Local<v8::Object> ret = NanNew<v8::Object>();
+  v8::Local<v8::Object> ret = Nan::New<v8::Object>();
 
-  ret->Set(NanNew<v8::String>("latitude"), NanNew<v8::Number>(location->getLatitude()));
-  ret->Set(NanNew<v8::String>("longitude"), NanNew<v8::Number>(location->getLongitude()));
+  ret->Set(Nan::New("latitude").ToLocalChecked(), Nan::New<v8::Number>(location->getLatitude()));
+  ret->Set(Nan::New("longitude").ToLocalChecked(), Nan::New<v8::Number>(location->getLongitude()));
 
-  v8::Local<v8::Object> country = NanNew<v8::Object>();
-  country->Set(NanNew<v8::String>("id"), NanNew<v8::Number>(location->getCountryId()));
-  country->Set(NanNew<v8::String>("iso"), NanNew<v8::String>(location->getCountryIso()));
-  country->Set(NanNew<v8::String>("name"),
-    GetNames(location->getEnglishCountryName(), location->getRussianCountryName()));
+  v8::Local<v8::Object> country = Nan::New<v8::Object>();
 
-  ret->Set(NanNew<v8::String>("country"), country);
+  country->Set(Nan::New("id").ToLocalChecked(), Nan::New<v8::Number>(location->getCountryId()));
+  country->Set(Nan::New("iso").ToLocalChecked(), Nan::New(location->getCountryIso()).ToLocalChecked());
+  country->Set(Nan::New("name").ToLocalChecked(),
+               GetNames(location->getEnglishCountryName(),
+                        location->getRussianCountryName()));
+
+  ret->Set(Nan::New("country").ToLocalChecked(), country);
 
   uint32_t region_id = location->getRegionId();
   if (region_id > 0) {
-    v8::Local<v8::Object> region = NanNew<v8::Object>();
-    region->Set(NanNew<v8::String>("id"), NanNew<v8::Number>(region_id));
-    region->Set(NanNew<v8::String>("iso"), NanNew<v8::String>(location->getRegionIso()));
-    region->Set(NanNew<v8::String>("name"),
-      GetNames(location->getEnglishRegionName(), location->getRussianRegionName()));
-    ret->Set(NanNew<v8::String>("region"), region);
+    v8::Local<v8::Object> region = Nan::New<v8::Object>();
+    region->Set(Nan::New("id").ToLocalChecked(), Nan::New<v8::Number>(region_id));
+    region->Set(Nan::New("iso").ToLocalChecked(), Nan::New(location->getRegionIso()).ToLocalChecked());
+    region->Set(Nan::New("name").ToLocalChecked(),
+                GetNames(location->getEnglishRegionName(),
+                         location->getRussianRegionName()));
+    ret->Set(Nan::New("region").ToLocalChecked(), region);
   }
 
   uint32_t city_id = location->getCityId();
   if (city_id > 0) {
-    v8::Local<v8::Object> city = NanNew<v8::Object>();
-    city->Set(NanNew<v8::String>("id"), NanNew<v8::Number>((uint32_t) location->getCityId()));
-    city->Set(NanNew<v8::String>("name"),
-      GetNames(location->getEnglishCityName(), location->getRussianCityName()));
-    ret->Set(NanNew<v8::String>("city"), city);
+    v8::Local<v8::Object> city = Nan::New<v8::Object>();
+    city->Set(Nan::New("id").ToLocalChecked(), Nan::New<v8::Number>((uint32_t) location->getCityId()));
+    city->Set(Nan::New("name").ToLocalChecked(),
+              GetNames(location->getEnglishCityName(),
+                       location->getRussianCityName()));
+    ret->Set(Nan::New("city").ToLocalChecked(), city);
   }
 
-  NanReturnValue(ret);
+  info.GetReturnValue().Set(ret);
 }
 
 NAN_METHOD(SypexGeoNode::GetCountryIso) {
-  NanScope();
-
-  if (args.Length() < 1) {
-    NanThrowTypeError("You should specify the ip.");
+  if (info.Length() < 1) {
+    Nan::ThrowTypeError("You should specify the ip.");
   }
 
-  SypexGeoNode   *obj     = node::ObjectWrap::Unwrap<SypexGeoNode>(args.This());
-  NanAsciiString ip(args[0]);
-  auto           location = obj->db->find(*ip);
+  SypexGeoNode *obj = Nan::ObjectWrap::Unwrap<SypexGeoNode>(info.This());
+  Nan::Utf8String ip(info[0]);
+  auto location = obj->db->find(*ip);
 
   if (nullptr == location) {
-    NanReturnValue(NanNull());
+    info.GetReturnValue().Set(Nan::Null());
   }
 
-  NanReturnValue(NanNew<v8::String>(location->getCountryIso()));
+  info.GetReturnValue().Set(Nan::New(location->getCountryIso()).ToLocalChecked());
 }
 
 NAN_METHOD(SypexGeoNode::GetCityFull) {
-  NanScope();
-
-  if (args.Length() < 1) {
-    NanThrowTypeError("You should specify the ip.");
+  if (info.Length() < 1) {
+    Nan::ThrowTypeError("You should specify the ip.");
   }
 
-  auto           obj      = node::ObjectWrap::Unwrap<SypexGeoNode>(args.This());
-  NanAsciiString ip(args[0]);
-  auto           location = obj->db->find(*ip);
+  auto obj = Nan::ObjectWrap::Unwrap<SypexGeoNode>(info.This());
+  Nan::Utf8String ip(info[0]);
+  auto location = obj->db->find(*ip);
 
   if (nullptr == location) {
-    NanReturnValue(NanNull());
+    info.GetReturnValue().Set(Nan::Null());
   }
 
-  v8::Local<v8::Object> ret = NanNew<v8::Object>();
+  v8::Local<v8::Object> ret = Nan::New<v8::Object>();
 
-  ret->Set(NanNew<v8::String>("latitude"), NanNew<v8::Number>(location->getLatitude()));
-  ret->Set(NanNew<v8::String>("longitude"), NanNew<v8::Number>(location->getLongitude()));
-  ret->Set(NanNew<v8::String>("country"), NanNew<v8::String>(location->getCountryIso()));
+  Nan::Set(ret, Nan::New("latitude").ToLocalChecked(), Nan::New<v8::Number>(location->getLatitude()));
+  Nan::Set(ret, Nan::New("longitude").ToLocalChecked(), Nan::New<v8::Number>(location->getLongitude()));
+  Nan::Set(ret, Nan::New("country").ToLocalChecked(), Nan::New(location->getCountryIso()).ToLocalChecked());
 
   uint32_t region_id = location->getRegionId();
   if (region_id > 0) {
-    ret->Set(NanNew<v8::String>("region"), NanNew<v8::String>(location->getRussianRegionName()));
+    Nan::Set(ret, Nan::New("region").ToLocalChecked(), Nan::New(location->getRussianRegionName()).ToLocalChecked());
   }
 
   uint32_t city_id = location->getCityId();
   if (city_id > 0) {
-    ret->Set(NanNew<v8::String>("name"), NanNew<v8::String>(location->getRussianCityName()));
+    Nan::Set(ret, Nan::New("name").ToLocalChecked(), Nan::New(location->getRussianCityName()).ToLocalChecked());
   }
 
-  NanReturnValue(ret);
+  info.GetReturnValue().Set(ret);
 }
 
 v8::Local<v8::Object> SypexGeoNode::GetNames(const std::string &englishName, const std::string &russianName) {
-  v8::Local<v8::Object> ret = NanNew<v8::Object>();
+  v8::Local<v8::Object> ret = Nan::New<v8::Object>();
 
-  ret->Set(NanNew<v8::String>("en"), NanNew<v8::String>(englishName));
-  ret->Set(NanNew<v8::String>("ru"), NanNew<v8::String>(russianName));
+  Nan::Set(ret, Nan::New("en").ToLocalChecked(), Nan::New(englishName).ToLocalChecked());
+  Nan::Set(ret, Nan::New("ru").ToLocalChecked(), Nan::New(russianName).ToLocalChecked());
 
   return ret;
 }
