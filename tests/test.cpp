@@ -18,12 +18,15 @@ int main() {
       "46.148.53.103",
       "89.254.208.188",
       "213.87.96.218",
-      "128.72.86.166"
+      "128.72.86.166",
+      "91.215.78.225"
     };
 
     for (auto cityIp: cityIps) {
       auto city = db->find(cityIp.c_str());
-      std::cout << "=== City at " << cityIp << " ===" << std::endl << (std::string) *city << std::endl << std::endl;
+      if (city) {
+        std::cout << "=== City at " << cityIp << " ===" << std::endl << (std::string) *city << std::endl << std::endl;
+      }
     }
   } catch (std::exception const &e) {
     std::cout << "Error: " << e.what() << std::endl;

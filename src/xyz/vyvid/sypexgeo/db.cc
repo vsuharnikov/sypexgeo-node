@@ -102,7 +102,7 @@ std::unique_ptr<Location> Db::parseCityFull(std::uint32_t pos) const {
 
   if (pos < header.country_size) {  // has only a country
     result = new Location(getCountry(pos));
-  } else {
+  } else if (pos < header.city_size) {
     auto raw_city   = getCity(pos);
     auto raw_region = getRegion(raw_city);
     result = new Location(getCountry(raw_region), raw_region, raw_city);
@@ -116,7 +116,7 @@ RawCountryAccess Db::getCountry(RawRegionAccess region_access) const {
 }
 
 RawCountryAccess Db::getCountry(std::uint32_t pos) const {
-  // @todo check that length <= header.max_country
+  // @todo check that length <= header.max_country with strnlen
   const char *offset = cities + pos;
 
   const RawCountryHeader *raw_header = reinterpret_cast<const RawCountryHeader *>(offset);
@@ -131,7 +131,7 @@ RawRegionAccess Db::getRegion(RawCityAccess city_access) const {
 }
 
 RawRegionAccess Db::getRegion(std::uint32_t pos) const {
-  // @todo check that length <= header.max_region
+  // @todo check that length <= header.max_region with strnlen
   const char *offset = regions + pos;
 
   const RawRegionHeader *raw_header = reinterpret_cast<const RawRegionHeader *>(offset);
@@ -143,7 +143,7 @@ RawRegionAccess Db::getRegion(std::uint32_t pos) const {
 }
 
 RawCityAccess Db::getCity(std::uint32_t pos) const {
-  // @todo check that length <= header.max_city
+  // @todo check that length <= header.max_city with strnlen
   const char *offset = cities + pos;
 
   const RawCityHeader *raw_header = reinterpret_cast<const RawCityHeader *>(offset);

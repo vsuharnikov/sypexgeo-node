@@ -160,16 +160,18 @@ alias to _getCountryIso_.
 ## Grunt commands
 
 * `grunt test` - run tests. Downloads a base if it necessary. At this time we have only JS-tests :)
-* `grunt cpplint` - check a cpp code for some rulse.
+* `grunt cpplint` - check a cpp code for some rules.
 
 ## Contributing
 
 * Please check your code by the command: `grunt cpplint`
 * If you need a manual build, then run:
 
-    node-gyp configure
-    node-gyp install
+    ```bash
+    node-gyp configure &&\
+    node-gyp install &&\
     node-gyp build
+    ```
 
 _(Coming soon)_
 

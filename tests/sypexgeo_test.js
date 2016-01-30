@@ -8,6 +8,7 @@
 "use strict";
 
 var sypex = require('../lib/sypexgeo');
+var LineByLineReader = require('line-by-line');
 var geoDb = null;
 
 module.exports = {
@@ -122,7 +123,26 @@ module.exports = {
               ru: 'Москва'
             }
           }
-        })
+        }),
+
+        'does not fail on tests set': function() {
+          var lr = new LineByLineReader(__dirname + '/ip_set.txt');
+
+          var getGeoBySypexFun = function(ip) {
+            return function() {
+              geoDb.find(ip);
+            }
+          };
+
+          lr.on('error', function (err) {
+            console.error(err);
+
+          });
+
+          lr.on('line', function (ip) {
+            expect(getGeoBySypexFun(ip)).to.not.throw(Error);
+          });
+        }
       }
     },
 

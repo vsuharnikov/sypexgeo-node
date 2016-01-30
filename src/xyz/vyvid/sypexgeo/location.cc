@@ -49,6 +49,25 @@ Location::Location(RawCountryAccess country) :
   english_city_name("") {
 }
 
+Location::Location() :
+  longitude(0),
+  latitude(0),
+
+  country_id(0),
+  country_iso(""),
+  russian_country_name(""),
+  english_country_name(""),
+
+  region_id(),
+  region_iso(""),
+  russian_region_name(""),
+  english_region_name(""),
+
+  city_id(),
+  russian_city_name(""),
+  english_city_name("") {
+}
+
 Location::~Location() {
 }
 

@@ -70,7 +70,8 @@ NAN_METHOD(SypexGeoNode::Find) {
   auto location = obj->db->find(*ip);
 
   if (nullptr == location) {
-    info.GetReturnValue().Set(Nan::Null());
+    info.GetReturnValue().SetNull();
+    return;
   }
 
   v8::Local<v8::Object> ret = Nan::New<v8::Object>();
@@ -122,7 +123,8 @@ NAN_METHOD(SypexGeoNode::GetCountryIso) {
   auto location = obj->db->find(*ip);
 
   if (nullptr == location) {
-    info.GetReturnValue().Set(Nan::Null());
+    info.GetReturnValue().SetNull();
+    return;
   }
 
   info.GetReturnValue().Set(Nan::New(location->getCountryIso()).ToLocalChecked());
@@ -138,7 +140,8 @@ NAN_METHOD(SypexGeoNode::GetCityFull) {
   auto location = obj->db->find(*ip);
 
   if (nullptr == location) {
-    info.GetReturnValue().Set(Nan::Null());
+    info.GetReturnValue().SetNull();
+    return;
   }
 
   v8::Local<v8::Object> ret = Nan::New<v8::Object>();

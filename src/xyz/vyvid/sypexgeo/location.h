@@ -22,9 +22,11 @@ namespace sypexgeo {
 
 class Location {
  public:
-  Location(RawCountryAccess country, RawRegionAccess region, RawCityAccess city);
+  explicit Location(RawCountryAccess country, RawRegionAccess region, RawCityAccess city);
 
   explicit Location(RawCountryAccess country);
+
+  Location();
 
   ~Location();
 
