@@ -1,6 +1,6 @@
 {
   "name": "sypexgeo-vyvid",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Unnoficial Sypex Geo API bindings for Node.JS",
   "keywords": [
     "sypexgeo",
