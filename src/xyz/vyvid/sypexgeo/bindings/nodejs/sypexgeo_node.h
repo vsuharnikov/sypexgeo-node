@@ -16,9 +16,7 @@
 
 class SypexGeoNode: public Nan::ObjectWrap {
  public:
-  static Nan::Persistent<v8::Function> constructor;
-
-  static void Init(v8::Local <v8::Object> exports);
+  static NAN_MODULE_INIT(Init);
 
  protected:
   std::unique_ptr<xyz::vyvid::sypexgeo::Db> db;
@@ -44,6 +42,8 @@ class SypexGeoNode: public Nan::ObjectWrap {
    * \deprecated
    */
   static NAN_METHOD(GetCityFull);
+
+  static Nan::Persistent<v8::Function> constructor;
 };
 
 #endif  // SRC_XYZ_VYVID_SYPEXGEO_BINDINGS_NODEJS_SYPEXGEO_NODE_H_

@@ -11,9 +11,7 @@
 
 Nan::Persistent<v8::Function> SypexGeoNode::constructor;
 
-void SypexGeoNode::Init(v8::Local<v8::Object> exports) {
-  Nan::HandleScope scope;
-
+NAN_MODULE_INIT(SypexGeoNode::Init) {
   v8::Local<v8::String> name = Nan::New("Geo").ToLocalChecked();
 
   v8::Local<v8::FunctionTemplate> tpl = Nan::New<v8::FunctionTemplate>(SypexGeoNode::New);
@@ -26,10 +24,8 @@ void SypexGeoNode::Init(v8::Local<v8::Object> exports) {
   Nan::SetPrototypeMethod(tpl, "getCityFull", GetCityFull);
   Nan::SetPrototypeMethod(tpl, "getCity", GetCityFull);
 
-  constructor.Reset(tpl->GetFunction());
-
-  exports->Set(Nan::New("MODE_MEMORY").ToLocalChecked(), Nan::New<v8::Integer>(2));
-  exports->Set(name, tpl->GetFunction());
+  constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
+  Nan::Set(target, name, Nan::GetFunction(tpl).ToLocalChecked());
 }
 
 SypexGeoNode::SypexGeoNode()
@@ -172,8 +168,9 @@ v8::Local<v8::Object> SypexGeoNode::GetNames(const std::string &englishName, con
   return ret;
 }
 
-void RegisterModule(v8::Handle<v8::Object> target) {
+NAN_MODULE_INIT(InitAll) {
+  Nan::Set(target, Nan::New("MODE_MEMORY").ToLocalChecked(), Nan::New<v8::Integer>(2));
   SypexGeoNode::Init(target);
 }
 
-NODE_MODULE(sypexgeo, RegisterModule);
+NODE_MODULE(sypexgeo, InitAll);
