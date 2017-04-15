@@ -6,6 +6,8 @@ Unofficial [Sypex Geo API](https://sypexgeo.net) bindings for Node.JS.
 
 ## Getting Started
 
+> Warning! This package [does not compile on Windows](#13).
+
 ### Requirements
 
 * g++ >= 4.8 for supporting C++11.
