@@ -7,18 +7,28 @@
 
 #include "xyz/vyvid/sypexgeo/db.h"
 
+#if defined(_WIN32)
+
+#pragma comment (lib, "ws2_32.lib")
+
+#include <Winsock2.h>
+#include <stdlib.h>
+
+#define bswap_16(x) _byteswap_ushort(x)
+#define bswap_32(x) _byteswap_ulong(x)
+
+#elif defined(__APPLE__)
+
 #include <arpa/inet.h>
-
-#if defined(__APPLE__)
-
 #include <libkern/OSByteOrder.h>
 
 #define bswap_16(x) OSSwapInt16(x)
 #define bswap_32(x) OSSwapInt32(x)
 #else
 
+#include <arpa/inet.h>
 #include <byteswap.h>
-#endif  // defined(__APPLE__)
+#endif
 
 #include <cstring>
 
