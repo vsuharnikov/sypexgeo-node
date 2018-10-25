@@ -9,7 +9,7 @@
 
 #if defined(_WIN32)
 
-#pragma comment (lib, "ws2_32.lib")
+#pragma comment(lib, "ws2_32.lib")
 
 #include <Winsock2.h>
 #include <stdlib.h>
@@ -19,17 +19,18 @@
 
 #elif defined(__APPLE__)
 
-#include <arpa/inet.h>
 #include <libkern/OSByteOrder.h>
 
 #define bswap_16(x) OSSwapInt16(x)
 #define bswap_32(x) OSSwapInt32(x)
+
 #else
 
-#include <arpa/inet.h>
 #include <byteswap.h>
+
 #endif
 
+#include <arpa/inet.h>
 #include <cstring>
 
 #define SXGEO_ASCII_ZERO_CODE 48

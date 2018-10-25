@@ -36,11 +36,11 @@
     "nan": "~2.10.0"
   },
   "devDependencies": {
-    "chai": "~3.4.0",
+    "chai": "^4.2.0",
     "grunt": "^1.0.3",
-    "grunt-shell": "~1.1.2",
-    "grunt-simple-mocha": "~0.4.0",
-    "line-by-line": "^0.1.4",
+    "grunt-shell": "^2.1.0",
+    "grunt-simple-mocha": "^0.4.1",
+    "line-by-line": "^0.1.6",
     "mocha": "^5.2.0",
     "node-cpplint": "^0.4.0"
   },

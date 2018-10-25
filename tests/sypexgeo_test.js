@@ -7,6 +7,7 @@
 
 "use strict";
 
+var expect = require('chai').expect;
 var sypex = require('../lib/sypexgeo');
 var LineByLineReader = require('line-by-line');
 var geoDb = null;
@@ -56,15 +57,15 @@ module.exports = {
           }
         }),
 
-        'only country': checkCountry.bind(null, '5.9.61.25', {
-          latitude: 51.5,
-          longitude: 10.5,
+        'only country': checkCountry.bind(null, '77.50.211.86', {
+          latitude: 60,
+          longitude: 100,
           country: {
-            id: 56,
-            iso: 'DE',
+            id: 185,
+            iso: 'RU',
             name: {
-              en: 'Germany',
-              ru: 'Германия'
+              en: 'Russia',
+              ru: 'Россия'
             }
           }
         }),
@@ -173,8 +174,8 @@ module.exports = {
             var city = geoDb.getCityFull('5.9.61.25');
 
             expect(city).to.have.property('country', 'DE');
-            expect(city).to.have.property('latitude').closeTo(51.5, 0.01);
-            expect(city).to.have.property('longitude').closeTo(10.5, 0.01);
+            expect(city).to.have.property('latitude').closeTo(50.47788, 0.01);
+            expect(city).to.have.property('longitude').closeTo(12.37129, 0.01);
           }
         ]
       },

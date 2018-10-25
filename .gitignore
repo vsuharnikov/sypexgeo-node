@@ -4,3 +4,9 @@ npm-debug.log
 /build/
 /node_modules/
 /tests/runtime/
+
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+sypexgeo_vyvid

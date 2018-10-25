@@ -170,12 +170,49 @@ alias to _getCountryIso_.
 * If you need a manual build, then run:
 
     ```bash
-    node-gyp configure &&\
-    node-gyp install &&\
-    node-gyp build
+    npm run-script configure &&\
+    npm run-script build &&\
+    npm run-script test
     ```
 
-_(Coming soon)_
+## Local development
+
+1. Install cmake:
+
+  * macOS: `brew install cmake`
+
+2. Install dependencies:
+
+  * `npm i` if you want to update `package-lock.json`;
+  * `npm ci` if not.
+
+### How to check a CPP version
+
+```bash
+cmake CMakeLists.txt &&\
+make &&\
+./sypexgeo_vyvid
+```
+
+You will see the output:
+
+```
+=== City at 77.50.211.86 ===
+Longitude: 100
+Latitude: 60
+Country id: 185
+Country ISO: RU
+Russian country name: Россия
+English country name: Russia
+Region id: 0
+Region ISO:
+Russian region name:
+English region name:
+City id: 0
+Russian city name:
+English city name:
+...
+```
 
 ## Changelog
 
