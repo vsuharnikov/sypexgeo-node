@@ -8,7 +8,6 @@
 'use strict';
 
 module.exports = function (grunt) {
-  grunt.loadNpmTasks('grunt-simple-mocha');
   grunt.loadNpmTasks('grunt-shell');
 
   var downloadBaseCommand = 'mkdir -p tests/runtime/;test -f tests/runtime/SxGeoCity.dat || (\
@@ -21,18 +20,6 @@ wget -nc https://sypexgeo.net/files/SxGeo22_API.zip -O tests/runtime/php/SxGeo22
 
   grunt.initConfig({
     pkg: '<json:package.json>',
-    simplemocha: {
-      all: {
-        src: ['tests/**/*.js'],
-        options: {
-          globals: ['chai'],
-          timeout: 3000,
-          ui: 'exports',
-          reporter: 'tap',
-          ignoreLeaks: false
-        }
-      }
-    },
     cpplint: {
       files: [
         'src/xyz/vyvid/sypexgeo/bindings/nodejs/sypexgeo_node.cc',
@@ -90,6 +77,10 @@ wget -nc https://sypexgeo.net/files/SxGeo22_API.zip -O tests/runtime/php/SxGeo22
         command: downloadPHPApiCommand,
         stdout: true,
         stderr: true
+      },
+
+      runtests: {
+        command: './node_modules/.bin/mocha --timeout 3000 --ui exports --reporter tap --check-leaks ./tests/sypexgeo_test.js'
       }
     }
   });
@@ -100,7 +91,7 @@ wget -nc https://sypexgeo.net/files/SxGeo22_API.zip -O tests/runtime/php/SxGeo22
     global.expect = require('chai').expect;
   });
 
-  grunt.registerTask('test', ['shell:downloadbase', 'shell:downloadphpapi', 'chaihelper', 'simplemocha']);
+  grunt.registerTask('test', ['shell:downloadbase', 'shell:downloadphpapi', 'chaihelper', 'shell:runtests']);
 
   // Default task.
   grunt.registerTask('default', ['cpplint', 'shell:build', 'test']);
